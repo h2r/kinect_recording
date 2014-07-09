@@ -2,3 +2,25 @@ kinect_recording
 ==============
 
 Code to record kinect rgb and d data, compress it, and play back on a topic
+
+
+Where to place files:
+
+None of this really matters if you change the appropriate code in the files to adjust for your own naming, this is just the way I have it. You could place the files in any catkin_ws with any package name but these are the packages I ended up having.
+
+-Create a custom package directory (catkin_ws)
+-Create packages for image_pipeline and learning_image_transport
+-extract_images and depthExtraction go in image_view
+-video_publisher goes in learning_image_transport
+-Rakefile and .sh files can all go in any directory as long as they're together
+
+USAGE:
+-rake makeRGBDVideo --> After a brief delay, records the live video by extracting images then stiches a video losslessly compressed with codec ffv1 into an avi file
+-rake publishVideo --> Extracts the images from the avi files and plays those images as a video on the topics /camera/rgb/image_color and /camera/depth_registered/image_raw
+
+(the following are all used in the above two files)
+-extract_images -> rosrun image_view extract_images _sec_per_frame:=0.01 image:=/camera/rgb/image_color
+-depth_extraction -> rosrun image_vview depthExtraction _sec_per_frame:=0.01 image:=/camera/depth_registered/image_raw
+-videoPublisher -> rosrun learning_image_transport videoPublisher (current directory) (name of folder that color images were exported to) (root name of files that the images were stored as) (color for color images, d for depth images) 
+  ex. rosrun learning_image_transport videoPublisher $PWD images image color
+  
